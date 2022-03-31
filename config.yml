@@ -1,0 +1,27 @@
+#Config of the plugin use Oe,Ue,Ae for umlauts! Do not change the main Structure of the config or you get a error message on server start!#
+FakePlayers:
+  OnlinePlayers: 10
+  defaultWorld: world
+  ProtocolLib: false
+  Gamemode: CREATIVE
+  AdvancedFakedPlayers (Wiki Recommended):
+    Enabled: false
+    Names:
+    - Notch
+    - Intel_7
+    - RafiMC
+    - ArchitectHyper
+    - GiiMiner
+    - Meralline
+    - BauPixelDev
+    - AqMin
+    - stabwounds
+    - DinoTopse
+    - CasinoBandit
+    - TripleTowers
+    - Enkler
+    - Verger
+    - Rowin
+    - 12skitzo
+    - _EnjoyMyPvP_
+    

@@ -1,0 +1,13 @@
+name: FakePlayers
+main: de.Herbystar.FakePlayers.Main
+version: 2.1
+author: Herbystar
+description: A plugin to manipulate the online count!
+commands:
+  fakePlayers:
+    usage: /fakePlayers
+    description: main command.
+    permission: FakePlayers.Commands
+permissions:
+  FakePlayers.Commands:
+    description: Permission for all ingame commands!
