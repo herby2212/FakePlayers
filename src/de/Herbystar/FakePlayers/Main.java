@@ -29,6 +29,7 @@ import de.Herbystar.FakePlayers.PlayerListHandler.PlayerListHandler_1_8_R2;
 import de.Herbystar.FakePlayers.PlayerListHandler.PlayerListHandler_1_8_R3;
 import de.Herbystar.FakePlayers.PlayerListHandler.PlayerListHandler_1_9_R1;
 import de.Herbystar.FakePlayers.PlayerListHandler.PlayerListHandler_1_9_R2;
+import de.Herbystar.TTA.Utils.TTA_BukkitVersion;
 
 public class Main extends JavaPlugin {
 	
@@ -182,7 +183,7 @@ public class Main extends JavaPlugin {
 			if(version.equals("v1_16_R3")) {
 				playerListHandler = new PlayerListHandler_1_16_R3();
 			}
-			if(Bukkit.getServer().getBukkitVersion().contains("1.17")) {
+			if(TTA_BukkitVersion.isVersion("1.17", 2)) {
 				playerListHandler = new PlayerListHandler_1_17_R1();
 			}
 		}
