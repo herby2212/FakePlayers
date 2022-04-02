@@ -23,6 +23,7 @@ import de.Herbystar.FakePlayers.PlayerListHandler.PlayerListHandler_1_15_R1;
 import de.Herbystar.FakePlayers.PlayerListHandler.PlayerListHandler_1_16_R1;
 import de.Herbystar.FakePlayers.PlayerListHandler.PlayerListHandler_1_16_R2;
 import de.Herbystar.FakePlayers.PlayerListHandler.PlayerListHandler_1_16_R3;
+import de.Herbystar.FakePlayers.PlayerListHandler.PlayerListHandler_1_17_R1;
 import de.Herbystar.FakePlayers.PlayerListHandler.PlayerListHandler_1_8_R1;
 import de.Herbystar.FakePlayers.PlayerListHandler.PlayerListHandler_1_8_R2;
 import de.Herbystar.FakePlayers.PlayerListHandler.PlayerListHandler_1_8_R3;
@@ -181,6 +182,9 @@ public class Main extends JavaPlugin {
 			if(version.equals("v1_16_R3")) {
 				playerListHandler = new PlayerListHandler_1_16_R3();
 			}
+			if(Bukkit.getServer().getBukkitVersion().contains("1.17")) {
+				playerListHandler = new PlayerListHandler_1_17_R1();
+			}
 		}
 	}
 
@@ -193,7 +197,9 @@ public class Main extends JavaPlugin {
 	//Depends Hook (If false FakePlayers not work!)
 	private boolean CheckDepends() {
 		if(Bukkit.getServer().getPluginManager().getPlugin("TTA") != null) {
-			return true;
+			if(Bukkit.getServer().getPluginManager().getPlugin("TTA").isEnabled()) {
+				return true;
+			}
 		}
 		return false;		
 	}
