@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_18_R2.CraftServer;
+import org.bukkit.craftbukkit.v1_18_R1.CraftServer;
 import com.mojang.authlib.GameProfile;
 
 import de.Herbystar.FakePlayers.Main;

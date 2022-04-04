@@ -24,6 +24,8 @@ import de.Herbystar.FakePlayers.PlayerListHandler.PlayerListHandler_1_16_R1;
 import de.Herbystar.FakePlayers.PlayerListHandler.PlayerListHandler_1_16_R2;
 import de.Herbystar.FakePlayers.PlayerListHandler.PlayerListHandler_1_16_R3;
 import de.Herbystar.FakePlayers.PlayerListHandler.PlayerListHandler_1_17_R1;
+import de.Herbystar.FakePlayers.PlayerListHandler.PlayerListHandler_1_18_R1;
+import de.Herbystar.FakePlayers.PlayerListHandler.PlayerListHandler_1_18_R2;
 import de.Herbystar.FakePlayers.PlayerListHandler.PlayerListHandler_1_8_R1;
 import de.Herbystar.FakePlayers.PlayerListHandler.PlayerListHandler_1_8_R2;
 import de.Herbystar.FakePlayers.PlayerListHandler.PlayerListHandler_1_8_R3;
@@ -185,6 +187,12 @@ public class Main extends JavaPlugin {
 			}
 			if(TTA_BukkitVersion.isVersion("1.17", 2)) {
 				playerListHandler = new PlayerListHandler_1_17_R1();
+			}
+			if(version.equals("v1_18_R1")) {
+				playerListHandler = new PlayerListHandler_1_18_R1();
+			}
+			if(version.equals("v1_18_R2")) {
+				playerListHandler = new PlayerListHandler_1_18_R2();
 			}
 		}
 	}

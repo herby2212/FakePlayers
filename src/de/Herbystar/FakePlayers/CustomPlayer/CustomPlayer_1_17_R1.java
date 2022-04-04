@@ -14,7 +14,7 @@ import net.minecraft.server.level.EntityPlayer;
 import net.minecraft.world.level.EnumGamemode;
 
 public class CustomPlayer_1_17_R1 extends EntityPlayer {
-
+	
     public CustomPlayer_1_17_R1(String name, UUID uuid) {
         super(((CraftServer) Bukkit.getServer()).getServer(),
                 ((CraftWorld) Bukkit.getServer().getWorld(Main.instance.defaultWorldName)).getHandle(),
