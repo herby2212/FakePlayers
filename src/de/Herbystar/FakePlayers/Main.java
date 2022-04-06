@@ -12,6 +12,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import de.Herbystar.FakePlayers.Events.PlayerLoginEventHandler;
+import de.Herbystar.FakePlayers.PlayerListHandler.NMS_PlayerListHandler;
 import de.Herbystar.FakePlayers.PlayerListHandler.PlayerListHandler;
 import de.Herbystar.FakePlayers.PlayerListHandler.PlayerListHandler_1_10_R1;
 import de.Herbystar.FakePlayers.PlayerListHandler.PlayerListHandler_1_11_R1;
@@ -192,7 +193,7 @@ public class Main extends JavaPlugin {
 				playerListHandler = new PlayerListHandler_1_18_R1();
 			}
 			if(version.equals("v1_18_R2")) {
-				playerListHandler = new PlayerListHandler_1_18_R2();
+				playerListHandler = new NMS_PlayerListHandler();
 			}
 		}
 	}
