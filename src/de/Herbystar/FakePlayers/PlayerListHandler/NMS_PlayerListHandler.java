@@ -18,9 +18,6 @@ import de.Herbystar.FakePlayers.Main;
 import de.Herbystar.FakePlayers.CustomPlayer.NMS_CustomPlayer;
 import de.Herbystar.FakePlayers.Utilities.RandomUUID;
 import de.Herbystar.TTA.Utils.Reflection;
-import net.minecraft.server.level.EntityPlayer;
-import net.minecraft.world.level.EnumGamemode;
-import net.minecraft.server.MinecraftServer;
 
 @SuppressWarnings("unused")
 public class NMS_PlayerListHandler implements PlayerListHandler {
@@ -28,7 +25,7 @@ public class NMS_PlayerListHandler implements PlayerListHandler {
 	private static HashMap<String, NMS_CustomPlayer> customPlayers = new HashMap<String, NMS_CustomPlayer>();
 	private static List<NMS_CustomPlayer> fakedPlayersStorage = new ArrayList<NMS_CustomPlayer>();
 
-	private static List<EntityPlayer> list;
+	private static List<Object> list;
 	
 	private static Class<?> worldClass;
 	private static Class<?> worldServerClass;
@@ -89,15 +86,15 @@ public class NMS_PlayerListHandler implements PlayerListHandler {
             Object playerList = t.get(instance);
             Field f = playerList.getClass().getSuperclass().getDeclaredField("j");
             
-            list = (List<EntityPlayer>) f.get(playerList);
+            list = (List<Object>) f.get(playerList);
             for(int i = 0; i < amount; i++) {
             	NMS_CustomPlayer cp = new NMS_CustomPlayer("", UUID.fromString("3e5cf803-1183-43f5-a53d-ea53c61b6274"));
             	fakedPlayersStorage.add(cp);
-            	list.add(cp);
+            	list.add(cp.getEntityPlayer());
             }
 			
             Main.instance.fakePlayersCount = amount;
-        } catch (IllegalAccessException | NoSuchFieldException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
+        } catch (IllegalAccessException | NoSuchFieldException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException | InstantiationException e) {
             e.printStackTrace();
         }
     }
@@ -105,30 +102,36 @@ public class NMS_PlayerListHandler implements PlayerListHandler {
     public void removeOnlinePlayers() {
     	int amount = fakedPlayersStorage.size();
     	for(NMS_CustomPlayer cp : fakedPlayersStorage) {
-    		list.remove(cp);
+    		list.remove(cp.getEntityPlayer());
     	}
     	Main.instance.fakePlayersCount = amount;
     }
     
     public void addCustomOnlinePlayer(String name) {
-    	NMS_CustomPlayer customPlayer = new NMS_CustomPlayer(name, RandomUUID.randomUUID());		
-		list.add(customPlayer);
-		customPlayers.put(name, customPlayer);
+    	Method getDedicatedServer;
+		try {
+	    	NMS_CustomPlayer customPlayer = new NMS_CustomPlayer(name, RandomUUID.randomUUID());		
+			list.add(customPlayer.getEntityPlayer());
+			customPlayers.put(name, customPlayer);
 
-		Main.instance.fakePlayersCount = Main.instance.fakePlayersCount + 1;
+			Main.instance.fakePlayersCount = Main.instance.fakePlayersCount + 1;
+
+		} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | InstantiationException e) {
+			e.printStackTrace();
+		}
     }
     
     //Remove all custom faked online players created by users or advanced startup
     public void removeCustomOnlinePlayers() {
     	for(NMS_CustomPlayer cp : customPlayers.values()) {
-    		list.remove(cp);
+    		list.remove(cp.getEntityPlayer());
     	}
     }
     
     public void removeCustomOnlinePlayer(String name) {
 		if(customPlayers.containsKey(name)) {
 			NMS_CustomPlayer cp = customPlayers.get(name);
-			list.remove(cp);
+			list.remove(cp.getEntityPlayer());
 			customPlayers.remove(name);
 			Main.instance.fakePlayersCount = Main.instance.fakePlayersCount - 1;
 		}

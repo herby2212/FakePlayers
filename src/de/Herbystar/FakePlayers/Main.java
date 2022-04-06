@@ -186,13 +186,7 @@ public class Main extends JavaPlugin {
 			if(version.equals("v1_16_R3")) {
 				playerListHandler = new PlayerListHandler_1_16_R3();
 			}
-			if(TTA_BukkitVersion.isVersion("1.17", 2)) {
-				playerListHandler = new PlayerListHandler_1_17_R1();
-			}
-			if(version.equals("v1_18_R1")) {
-				playerListHandler = new PlayerListHandler_1_18_R1();
-			}
-			if(version.equals("v1_18_R2")) {
+			if(TTA_BukkitVersion.getVersionAsInt(2) >= 117) {
 				playerListHandler = new NMS_PlayerListHandler();
 			}
 		}
