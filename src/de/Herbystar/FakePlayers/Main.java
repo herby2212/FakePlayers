@@ -141,6 +141,8 @@ public class Main extends JavaPlugin {
 				this.initializePlayerListHandler();
 			}
 		} else {
+			playerListHandler = new NMS_PlayerListHandler();
+			/*
 			if(version.equals("v1_8_R1")) {
 				playerListHandler = new PlayerListHandler_1_8_R1();
 			}
@@ -189,6 +191,7 @@ public class Main extends JavaPlugin {
 			if(TTA_BukkitVersion.getVersionAsInt(2) >= 117) {
 				playerListHandler = new NMS_PlayerListHandler();
 			}
+			*/
 		}
 	}
 

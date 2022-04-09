@@ -19,6 +19,7 @@ import de.Herbystar.TTA.Utils.TTA_BukkitVersion;
 public class NMS_CustomPlayer {
 
 	private static Class<?> playerInteractManagerClass;
+	private static Constructor<?> playerInteractManagerConstructor;
 	
 	private static Class<?> minecraftServerClass;
 	private static Class<?> worldServerClass;
@@ -39,15 +40,17 @@ public class NMS_CustomPlayer {
 	private Object entityPlayer;
 	
 	static {
-		try {
-			playerInteractManagerClass = Class.forName("net.minecraft.server.level.PlayerInteractManager");
-			
+		try {		
 			craftServerClass = Reflection.getCraftClass("CraftServer");
 			
 			craftWorldClass = Reflection.getCraftClass("CraftWorld");
 			minecraftServerClass = Class.forName("net.minecraft.server.MinecraftServer");
 			worldServerClass = Class.forName("net.minecraft.server.level.WorldServer");
 			enumGamemodeClass = Class.forName("net.minecraft.world.level.EnumGamemode");
+			
+			playerInteractManagerClass = Class.forName("net.minecraft.server.level.PlayerInteractManager");
+			playerInteractManagerConstructor = playerInteractManagerClass.getConstructor(worldServerClass);
+			
 			entityPlayerClass = Class.forName("net.minecraft.server.level.EntityPlayer");
 			entityPlayerConstructor = entityPlayerClass.getConstructor(minecraftServerClass, worldServerClass, GameProfile.class);
 			
@@ -57,8 +60,11 @@ public class NMS_CustomPlayer {
 			
 			if(TTA_BukkitVersion.isVersion("1.17", 2)) {
 				setGamemodeMethod = playerInteractManagerClass.getMethod("setGameMode", new Class[] { enumGamemodeClass });
-			} else {
+			} else if(TTA_BukkitVersion.isVersion("1.18", 2)) {
 				setGamemodeMethod = playerInteractManagerClass.getMethod("a", new Class[] { enumGamemodeClass });
+			} else { //1.16 and below
+				setGamemodeMethod = playerInteractManagerClass.getMethod("b", new Class[] { enumGamemodeClass });
+				entityPlayerConstructor = entityPlayerClass.getConstructor(minecraftServerClass, worldServerClass, GameProfile.class, playerInteractManagerClass);
 			}
 		} catch (ClassNotFoundException | SecurityException | NoSuchMethodException | NoSuchFieldException ex) {
             ex.printStackTrace();
@@ -75,13 +81,23 @@ public class NMS_CustomPlayer {
     	Object wServer =  getWorldServer.invoke(craftWorldClass.cast(Bukkit.getServer().getWorld(Main.instance.defaultWorldName)));
     	
     	Object worldServer = worldServerClass.cast(wServer);
-    	
-    	entityPlayer = entityPlayerConstructor.newInstance(mcServer, worldServer, new GameProfile(uuid, name));
+    	Object playerInteractManager = playerInteractManagerConstructor.newInstance(worldServer);
+    	if(TTA_BukkitVersion.getVersionAsInt(2) >= 117) {
+    		entityPlayer = entityPlayerConstructor.newInstance(mcServer, worldServer, new GameProfile(uuid, name));
+    	} else {
+    		entityPlayer = entityPlayerConstructor.newInstance(mcServer, worldServer, new GameProfile(uuid, name), playerInteractManager);
+    	}
     	
     	List<Object> gamemodes = Arrays.asList(enumGamemodeClass.getEnumConstants());
     	Object gamemode = getEnumByString(gamemodes, Main.instance.gamemode);
-        setGamemodeMethod.invoke(playerIntactmanager.get(entityPlayer), gamemode);
-		
+    	
+    	if(TTA_BukkitVersion.getVersionAsInt(2) >= 117) {
+    		setGamemodeMethod.invoke(playerIntactmanager.get(entityPlayer), gamemode);
+    	} else {
+        	
+        	setGamemodeMethod.invoke(playerInteractManager, gamemode);
+    	}  	
+        		
         playerCon.setAccessible(true);
         
         playerCon.set(entityPlayer, new NMS_CustomClient(minServer.get(entityPlayer), entityPlayer).getPlayerConnection());
