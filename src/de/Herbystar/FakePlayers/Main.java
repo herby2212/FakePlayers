@@ -14,25 +14,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 import de.Herbystar.FakePlayers.Events.PlayerLoginEventHandler;
 import de.Herbystar.FakePlayers.PlayerListHandler.NMS_PlayerListHandler;
 import de.Herbystar.FakePlayers.PlayerListHandler.PlayerListHandler;
-import de.Herbystar.FakePlayers.PlayerListHandler.PlayerListHandler_1_10_R1;
-import de.Herbystar.FakePlayers.PlayerListHandler.PlayerListHandler_1_11_R1;
-import de.Herbystar.FakePlayers.PlayerListHandler.PlayerListHandler_1_12_R1;
-import de.Herbystar.FakePlayers.PlayerListHandler.PlayerListHandler_1_13_R1;
-import de.Herbystar.FakePlayers.PlayerListHandler.PlayerListHandler_1_13_R2;
-import de.Herbystar.FakePlayers.PlayerListHandler.PlayerListHandler_1_14_R1;
-import de.Herbystar.FakePlayers.PlayerListHandler.PlayerListHandler_1_15_R1;
-import de.Herbystar.FakePlayers.PlayerListHandler.PlayerListHandler_1_16_R1;
-import de.Herbystar.FakePlayers.PlayerListHandler.PlayerListHandler_1_16_R2;
-import de.Herbystar.FakePlayers.PlayerListHandler.PlayerListHandler_1_16_R3;
-import de.Herbystar.FakePlayers.PlayerListHandler.PlayerListHandler_1_17_R1;
-import de.Herbystar.FakePlayers.PlayerListHandler.PlayerListHandler_1_18_R1;
-import de.Herbystar.FakePlayers.PlayerListHandler.PlayerListHandler_1_18_R2;
-import de.Herbystar.FakePlayers.PlayerListHandler.PlayerListHandler_1_8_R1;
-import de.Herbystar.FakePlayers.PlayerListHandler.PlayerListHandler_1_8_R2;
-import de.Herbystar.FakePlayers.PlayerListHandler.PlayerListHandler_1_8_R3;
-import de.Herbystar.FakePlayers.PlayerListHandler.PlayerListHandler_1_9_R1;
-import de.Herbystar.FakePlayers.PlayerListHandler.PlayerListHandler_1_9_R2;
-import de.Herbystar.TTA.Utils.TTA_BukkitVersion;
 
 public class Main extends JavaPlugin {
 	
@@ -129,7 +110,6 @@ public class Main extends JavaPlugin {
 	}
 	
 	private void initializePlayerListHandler() {
-		String version = this.getServerVersion();
 		if(this.protocolLib == true) {
 			if(Bukkit.getServer().getPluginManager().getPlugin("ProtocolLib") != null) {
 				//Wechsel zu ProtocolLib Funktionen sollten beim Nutzer Fehler auftreten, nur temporäre Lösung! Commands funktionieren nicht in diesem Modus, eventuell später noch implementieren mal schauen?
@@ -142,56 +122,6 @@ public class Main extends JavaPlugin {
 			}
 		} else {
 			playerListHandler = new NMS_PlayerListHandler();
-			/*
-			if(version.equals("v1_8_R1")) {
-				playerListHandler = new PlayerListHandler_1_8_R1();
-			}
-			if(version.equals("v1_8_R2")) {
-				playerListHandler = new PlayerListHandler_1_8_R2();
-			}
-			if(version.equals("v1_8_R3")) {
-				playerListHandler = new PlayerListHandler_1_8_R3();
-			}
-			if(version.equals("v1_9_R1")) {
-				playerListHandler = new PlayerListHandler_1_9_R1();
-			}
-			if(version.equals("v1_9_R2")) {
-				playerListHandler = new PlayerListHandler_1_9_R2();
-			}
-			if(version.equals("v1_10_R1")) {
-				playerListHandler = new PlayerListHandler_1_10_R1();
-			}
-			if(version.equals("v1_11_R1")) {
-				playerListHandler = new PlayerListHandler_1_11_R1();
-			}
-			if(version.equals("v1_12_R1")) {
-				playerListHandler = new PlayerListHandler_1_12_R1();
-			}
-			if(version.equals("v1_13_R1")) {
-				playerListHandler = new PlayerListHandler_1_13_R1();
-			}
-			if(version.equals("v1_13_R2")) {
-				playerListHandler = new PlayerListHandler_1_13_R2();
-			}	
-			if(version.equals("v1_14_R1")) {
-				playerListHandler = new PlayerListHandler_1_14_R1();
-			}	
-			if(version.equals("v1_15_R1")) {
-				playerListHandler = new PlayerListHandler_1_15_R1();
-			}
-			if(version.equals("v1_16_R1")) {
-				playerListHandler = new PlayerListHandler_1_16_R1();
-			}
-			if(version.equals("v1_16_R2")) {
-				playerListHandler = new PlayerListHandler_1_16_R2();
-			}
-			if(version.equals("v1_16_R3")) {
-				playerListHandler = new PlayerListHandler_1_16_R3();
-			}
-			if(TTA_BukkitVersion.getVersionAsInt(2) >= 117) {
-				playerListHandler = new NMS_PlayerListHandler();
-			}
-			*/
 		}
 	}
 

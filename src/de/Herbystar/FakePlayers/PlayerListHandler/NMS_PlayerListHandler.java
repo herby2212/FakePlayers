@@ -5,6 +5,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
@@ -18,6 +19,7 @@ import de.Herbystar.FakePlayers.Main;
 import de.Herbystar.FakePlayers.CustomPlayer.NMS_CustomPlayer;
 import de.Herbystar.FakePlayers.Utilities.RandomUUID;
 import de.Herbystar.TTA.Utils.Reflection;
+import de.Herbystar.TTA.Utils.TTA_BukkitVersion;
 
 @SuppressWarnings("unused")
 public class NMS_PlayerListHandler implements PlayerListHandler {
@@ -38,7 +40,6 @@ public class NMS_PlayerListHandler implements PlayerListHandler {
 	private static Constructor<?> craftPlayerConstructor;
 	
 	private static Class<?> entityPlayerClass;
-	private static Constructor<?> entityPlayerConstructor;
 	
 	private static Class<?> craftServerClass;
 	private static Constructor<?> craftServerConstructor;
@@ -46,22 +47,41 @@ public class NMS_PlayerListHandler implements PlayerListHandler {
 	private static Class<?> playerInteractManagerClass;
 	private static Constructor<?> playerInteractManagerConstructor;
 	
+	private static Field playerList;
+	private static Field players;	
 	 
     static {    
         try {
-        	worldClass = Class.forName("net.minecraft.world.level.World");
-        	worldServerClass = Class.forName("net.minecraft.server.level.WorldServer");
-        	
         	craftPlayerClass = Reflection.getCraftClass("entity.CraftPlayer");
-        	        	        	
+        	
         	craftServerClass = Reflection.getCraftClass("CraftServer");
         	
-        	minecraftServerClass = Class.forName("net.minecraft.server.MinecraftServer");
-                    	
-        	entityPlayerClass = Class.forName("net.minecraft.server.level.EntityPlayer");
-        	entityPlayerConstructor = entityPlayerClass.getConstructor(minecraftServerClass, worldServerClass, GameProfile.class);
-
-        } catch (NoSuchMethodException | SecurityException | ClassNotFoundException ex) {
+        	if(TTA_BukkitVersion.getVersionAsInt(2) >= 117) {
+        		worldClass = Class.forName("net.minecraft.world.level.World");
+            	worldServerClass = Class.forName("net.minecraft.server.level.WorldServer");
+            	
+            	minecraftServerClass = Class.forName("net.minecraft.server.MinecraftServer");
+                        	
+            	entityPlayerClass = Class.forName("net.minecraft.server.level.EntityPlayer");
+            	
+            	playerList = minecraftServerClass.getDeclaredField("S");
+        	} else {
+        		worldClass = Reflection.getNMSClass("World");
+            	worldServerClass = Reflection.getNMSClass("WorldServer");
+            	
+            	minecraftServerClass = Reflection.getNMSClass("MinecraftServer");
+                        	
+            	entityPlayerClass = Reflection.getNMSClass("EntityPlayer");
+            	
+            	if(TTA_BukkitVersion.matchVersion(Arrays.asList("1.8", "1.9", "1.10", "1.11", "1.12"), 2)) {
+            		playerList = minecraftServerClass.getDeclaredField("v");
+            	} else if(!TTA_BukkitVersion.isVersion("1.13.2") && TTA_BukkitVersion.isVersion("1.13", 2)) {
+            		playerList = minecraftServerClass.getDeclaredField("s");
+            	} else {
+                	playerList = minecraftServerClass.getDeclaredField("playerList");
+            	}
+        	}      	
+        } catch (SecurityException | ClassNotFoundException | NoSuchFieldException ex) {
             System.err.println("Error - Classes not initialized!");
 			ex.printStackTrace();
         }
@@ -69,24 +89,22 @@ public class NMS_PlayerListHandler implements PlayerListHandler {
     
     @SuppressWarnings("unchecked")
 	public void setOnlinePlayers(int amount) {
-    	Bukkit.getConsoleSender().sendMessage("NMS PlayerListHandler");
-        Field t = null;
-        try {
-            t = minecraftServerClass.getDeclaredField("S");
-            t.setAccessible(true);
-        } catch(Exception x) {
-        	x.printStackTrace();
-        }
-        assert t != null;
+        playerList.setAccessible(true);
+        assert playerList != null;
         try {
         	Method getDedicatedServer = craftServerClass.getMethod("getServer");
         	Object dServer =  getDedicatedServer.invoke(craftServerClass.cast(Bukkit.getServer()));
         	
             Object instance = minecraftServerClass.cast(dServer);
-            Object playerList = t.get(instance);
-            Field f = playerList.getClass().getSuperclass().getDeclaredField("j");
+            Object pList = playerList.get(instance);
+            Field f;
+            if(TTA_BukkitVersion.getVersionAsInt(2) >= 117) {
+            	f = pList.getClass().getSuperclass().getDeclaredField("j");
+            } else {
+            	f = pList.getClass().getSuperclass().getDeclaredField("players");
+            }
             
-            list = (List<Object>) f.get(playerList);
+            list = (List<Object>) f.get(pList);
             for(int i = 0; i < amount; i++) {
             	NMS_CustomPlayer cp = new NMS_CustomPlayer("", UUID.fromString("3e5cf803-1183-43f5-a53d-ea53c61b6274"));
             	fakedPlayersStorage.add(cp);

@@ -44,27 +44,42 @@ public class NMS_CustomPlayer {
 			craftServerClass = Reflection.getCraftClass("CraftServer");
 			
 			craftWorldClass = Reflection.getCraftClass("CraftWorld");
-			minecraftServerClass = Class.forName("net.minecraft.server.MinecraftServer");
-			worldServerClass = Class.forName("net.minecraft.server.level.WorldServer");
-			enumGamemodeClass = Class.forName("net.minecraft.world.level.EnumGamemode");
 			
-			playerInteractManagerClass = Class.forName("net.minecraft.server.level.PlayerInteractManager");
-			playerInteractManagerConstructor = playerInteractManagerClass.getConstructor(worldServerClass);
-			
-			entityPlayerClass = Class.forName("net.minecraft.server.level.EntityPlayer");
-			entityPlayerConstructor = entityPlayerClass.getConstructor(minecraftServerClass, worldServerClass, GameProfile.class);
-			
-			playerCon = entityPlayerClass.getField("b");
-			playerIntactmanager = entityPlayerClass.getField("d");
-			minServer = entityPlayerClass.getField("c");
-			
+			if(TTA_BukkitVersion.getVersionAsInt(2) >= 117) {
+				minecraftServerClass = Class.forName("net.minecraft.server.MinecraftServer");
+				worldServerClass = Class.forName("net.minecraft.server.level.WorldServer");
+				enumGamemodeClass = Class.forName("net.minecraft.world.level.EnumGamemode");
+				
+				playerInteractManagerClass = Class.forName("net.minecraft.server.level.PlayerInteractManager");
+				playerInteractManagerConstructor = playerInteractManagerClass.getConstructor(worldServerClass);
+				
+				entityPlayerClass = Class.forName("net.minecraft.server.level.EntityPlayer");
+				entityPlayerConstructor = entityPlayerClass.getConstructor(minecraftServerClass, worldServerClass, GameProfile.class);
+				
+				playerIntactmanager = entityPlayerClass.getField("d");
+				minServer = entityPlayerClass.getField("c");
+				playerCon = entityPlayerClass.getField("b");
+			} else {
+				minecraftServerClass = Reflection.getNMSClass("MinecraftServer");
+				worldServerClass = Reflection.getNMSClass("WorldServer");
+				enumGamemodeClass = Reflection.getNMSClass("EnumGamemode");
+				
+				playerInteractManagerClass = Reflection.getNMSClass("PlayerInteractManager");
+				playerInteractManagerConstructor = playerInteractManagerClass.getConstructor(worldServerClass);
+				
+				entityPlayerClass = Reflection.getNMSClass("EntityPlayer");
+				entityPlayerConstructor = entityPlayerClass.getConstructor(minecraftServerClass, worldServerClass, GameProfile.class, playerInteractManagerClass);
+				
+				minServer = entityPlayerClass.getField("server");
+				playerCon = entityPlayerClass.getField("playerConnection");
+			}
+						
 			if(TTA_BukkitVersion.isVersion("1.17", 2)) {
 				setGamemodeMethod = playerInteractManagerClass.getMethod("setGameMode", new Class[] { enumGamemodeClass });
 			} else if(TTA_BukkitVersion.isVersion("1.18", 2)) {
 				setGamemodeMethod = playerInteractManagerClass.getMethod("a", new Class[] { enumGamemodeClass });
 			} else { //1.16 and below
 				setGamemodeMethod = playerInteractManagerClass.getMethod("b", new Class[] { enumGamemodeClass });
-				entityPlayerConstructor = entityPlayerClass.getConstructor(minecraftServerClass, worldServerClass, GameProfile.class, playerInteractManagerClass);
 			}
 		} catch (ClassNotFoundException | SecurityException | NoSuchMethodException | NoSuchFieldException ex) {
             ex.printStackTrace();
@@ -82,6 +97,7 @@ public class NMS_CustomPlayer {
     	
     	Object worldServer = worldServerClass.cast(wServer);
     	Object playerInteractManager = playerInteractManagerConstructor.newInstance(worldServer);
+    	
     	if(TTA_BukkitVersion.getVersionAsInt(2) >= 117) {
     		entityPlayer = entityPlayerConstructor.newInstance(mcServer, worldServer, new GameProfile(uuid, name));
     	} else {
@@ -94,13 +110,14 @@ public class NMS_CustomPlayer {
     	if(TTA_BukkitVersion.getVersionAsInt(2) >= 117) {
     		setGamemodeMethod.invoke(playerIntactmanager.get(entityPlayer), gamemode);
     	} else {
-        	
         	setGamemodeMethod.invoke(playerInteractManager, gamemode);
     	}  	
         		
         playerCon.setAccessible(true);
         
-        playerCon.set(entityPlayer, new NMS_CustomClient(minServer.get(entityPlayer), entityPlayer).getPlayerConnection());
+        Object connection = new NMS_CustomClient(minServer.get(entityPlayer), entityPlayer).getPlayerConnection();
+
+        playerCon.set(entityPlayer, connection);
     }
     
     private Object getEnumByString(List<Object> enumList, String target) {

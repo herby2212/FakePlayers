@@ -5,6 +5,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.List;
 
+import de.Herbystar.TTA.Utils.Reflection;
 import de.Herbystar.TTA.Utils.TTA_BukkitVersion;
 
 public class NMS_CustomClient {
@@ -24,19 +25,26 @@ public class NMS_CustomClient {
 	static {
 		try {
 			if(TTA_BukkitVersion.getVersionAsInt(2) < 117) {
+				minecraftServerClass = Reflection.getNMSClass("MinecraftServer");
+				enumProtocolDirection = Reflection.getNMSClass("EnumProtocolDirection");
+				networkManagerClass = Reflection.getNMSClass("NetworkManager");
+				entityPlayerClass = Reflection.getNMSClass("EntityPlayer");
+				
+				playerConnectionClass = Reflection.getNMSClass("PlayerConnection");
+				
 				connectionEnumName = "CLIENTBOUND";
 			} else {
 				minecraftServerClass = Class.forName("net.minecraft.server.MinecraftServer");
 				enumProtocolDirection = Class.forName("net.minecraft.network.protocol.EnumProtocolDirection");
 				networkManagerClass = Class.forName("net.minecraft.network.NetworkManager");
-				networkManagerConstructor = networkManagerClass.getConstructor(enumProtocolDirection);
 				entityPlayerClass = Class.forName("net.minecraft.server.level.EntityPlayer");
 				
 				playerConnectionClass = Class.forName("net.minecraft.server.network.PlayerConnection");
-				playerConnectionConstructor = playerConnectionClass.getConstructor(minecraftServerClass, networkManagerClass, entityPlayerClass);
 				
 				connectionEnumName = "b";
 			}
+			networkManagerConstructor = networkManagerClass.getConstructor(enumProtocolDirection);
+			playerConnectionConstructor = playerConnectionClass.getConstructor(minecraftServerClass, networkManagerClass, entityPlayerClass);
 		} catch(ClassNotFoundException | NoSuchMethodException | SecurityException ex) {
 			ex.printStackTrace();
 		}
