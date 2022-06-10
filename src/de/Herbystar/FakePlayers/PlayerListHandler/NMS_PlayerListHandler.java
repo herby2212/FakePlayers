@@ -64,7 +64,11 @@ public class NMS_PlayerListHandler implements PlayerListHandler {
                         	
             	entityPlayerClass = Class.forName("net.minecraft.server.level.EntityPlayer");
             	
-            	playerList = minecraftServerClass.getDeclaredField("S");
+            	if(TTA_BukkitVersion.isVersion("1.19", 2)) {
+            		playerList = minecraftServerClass.getDeclaredField("P");
+            	} else {
+                	playerList = minecraftServerClass.getDeclaredField("S");
+            	}
         	} else {
         		worldClass = Reflection.getNMSClass("World");
             	worldServerClass = Reflection.getNMSClass("WorldServer");
