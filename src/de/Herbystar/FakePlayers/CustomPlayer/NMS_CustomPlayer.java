@@ -72,7 +72,11 @@ public class NMS_CustomPlayer {
 				worldClass = Reflection.getNMSClass("World");
 				worldServerClass = Reflection.getNMSClass("WorldServer");
 				
-				enumGamemodeClass = Reflection.getNMSClass("EnumGamemode");
+				if(TTA_BukkitVersion.getVersionAsInt(2) <= 19) {
+					enumGamemodeClass = Reflection.getNMSClass("WorldSettings").getClasses()[0];					
+				} else {
+					enumGamemodeClass = Reflection.getNMSClass("EnumGamemode");
+				}
 				
 				playerInteractManagerClass = Reflection.getNMSClass("PlayerInteractManager");
 				if(TTA_BukkitVersion.getVersionAsInt(2) <= 113) {
