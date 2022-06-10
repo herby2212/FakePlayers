@@ -130,7 +130,7 @@ public class NMS_PlayerListHandler implements PlayerListHandler {
     }
     
     public void addCustomOnlinePlayer(String name) {
-    	Method getDedicatedServer;
+//    	Method getDedicatedServer;
 		try {
 	    	NMS_CustomPlayer customPlayer = new NMS_CustomPlayer(name, RandomUUID.randomUUID());		
 			list.add(customPlayer.getEntityPlayer());
