@@ -6,6 +6,7 @@ FakePlayers:
   Gamemode: CREATIVE
   AdvancedFakedPlayers (Wiki Recommended):
     Enabled: false
+    Skins: true
     Names:
     - Notch
     - Intel_7

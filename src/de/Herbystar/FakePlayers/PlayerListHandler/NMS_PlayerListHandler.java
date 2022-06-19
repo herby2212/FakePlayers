@@ -25,7 +25,7 @@ import de.Herbystar.TTA.Utils.TTA_BukkitVersion;
 @SuppressWarnings("unused")
 public class NMS_PlayerListHandler implements PlayerListHandler {
 	
-	private static HashMap<String, NMS_CustomPlayer> customPlayers = new HashMap<String, NMS_CustomPlayer>();
+	public static HashMap<String, NMS_CustomPlayer> customPlayers = new HashMap<String, NMS_CustomPlayer>();
 	private static List<NMS_CustomPlayer> fakedPlayersStorage = new ArrayList<NMS_CustomPlayer>();
 
 	private static List<Object> list;
@@ -134,13 +134,18 @@ public class NMS_PlayerListHandler implements PlayerListHandler {
     	}
     	Main.instance.fakePlayersCount = amount;
     }
-    
-    public void addCustomOnlinePlayer(String name) {
+        
+    @SuppressWarnings("deprecation")
+	public void addCustomOnlinePlayer(String name) {
 //    	Method getDedicatedServer;
 		try {
 	    	NMS_CustomPlayer customPlayer;
+	    	UUID uuid = RandomUUID.randomUUID();
+	    	if(Main.instance.getConfig().getBoolean("FakePlayers.AdvancedFakedPlayers (Wiki Recommended).Skins") == true) {
+	    		uuid = Bukkit.getServer().getOfflinePlayer(name).getUniqueId();
+	    	}
 			try {
-				customPlayer = new NMS_CustomPlayer(name, RandomUUID.randomUUID());
+				customPlayer = new NMS_CustomPlayer(name, uuid);
 			} catch (WrongWorldException e) {
 				return;
 			}

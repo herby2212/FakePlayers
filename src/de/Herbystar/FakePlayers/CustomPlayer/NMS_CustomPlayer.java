@@ -40,6 +40,8 @@ public class NMS_CustomPlayer {
 	private static Method setGamemodeMethod;
 	
 	private Object entityPlayer;
+	
+	private UUID uuid;
 		
 	static {
 		try {		
@@ -166,6 +168,10 @@ public class NMS_CustomPlayer {
     public Object getEntityPlayer() {
 		return this.entityPlayer;
     	
+    }
+    
+    public UUID getUUID() {
+    	return this.uuid;
     }
 
 }
