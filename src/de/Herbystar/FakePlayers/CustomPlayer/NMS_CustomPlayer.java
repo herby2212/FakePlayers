@@ -13,6 +13,8 @@ import com.mojang.authlib.GameProfile;
 
 import de.Herbystar.FakePlayers.Main;
 import de.Herbystar.FakePlayers.CustomClient.NMS_CustomClient;
+import de.Herbystar.FakePlayers.CustomPlayer.PlayOutPlayerInfo.playerInfoAction;
+import de.Herbystar.FakePlayers.Utilities.EnumHelper;
 import de.Herbystar.TTA.Utils.Reflection;
 import de.Herbystar.TTA.Utils.TTA_BukkitVersion;
 
@@ -140,7 +142,7 @@ public class NMS_CustomPlayer {
     	}
     	
     	List<Object> gamemodes = Arrays.asList(enumGamemodeClass.getEnumConstants());
-    	Object gamemode = getEnumByString(gamemodes, Main.instance.gamemode);
+    	Object gamemode = EnumHelper.getEnumByString(gamemodes, Main.instance.gamemode);
     	
     	if(TTA_BukkitVersion.getVersionAsInt(2) >= 117) {
     		setGamemodeMethod.invoke(playerIntactmanager.get(entityPlayer), gamemode);
@@ -153,16 +155,8 @@ public class NMS_CustomPlayer {
         Object connection = new NMS_CustomClient(minServer.get(entityPlayer), entityPlayer).getPlayerConnection();
 
         playerCon.set(entityPlayer, connection);
-    }
-    
-    private Object getEnumByString(List<Object> enumList, String target) {
-    	Object o = null;
-    	for(Object e : enumList) {
-    		if(e.toString().equals(target)) {
-    			o = enumList.get(enumList.indexOf(e));
-    		}
-    	}
-    	return o;
+        
+        new PlayOutPlayerInfo(entityPlayer, playerInfoAction.ADD_PLAYER);
     }
     
     public Object getEntityPlayer() {

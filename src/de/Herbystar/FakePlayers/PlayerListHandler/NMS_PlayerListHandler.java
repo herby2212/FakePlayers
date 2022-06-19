@@ -17,7 +17,9 @@ import com.mojang.authlib.GameProfile;
 
 import de.Herbystar.FakePlayers.Main;
 import de.Herbystar.FakePlayers.CustomPlayer.NMS_CustomPlayer;
+import de.Herbystar.FakePlayers.CustomPlayer.PlayOutPlayerInfo;
 import de.Herbystar.FakePlayers.CustomPlayer.WrongWorldException;
+import de.Herbystar.FakePlayers.CustomPlayer.PlayOutPlayerInfo.playerInfoAction;
 import de.Herbystar.FakePlayers.Utilities.RandomUUID;
 import de.Herbystar.TTA.Utils.Reflection;
 import de.Herbystar.TTA.Utils.TTA_BukkitVersion;
@@ -170,9 +172,17 @@ public class NMS_PlayerListHandler implements PlayerListHandler {
     public void removeCustomOnlinePlayer(String name) {
 		if(customPlayers.containsKey(name)) {
 			NMS_CustomPlayer cp = customPlayers.get(name);
-			list.remove(cp.getEntityPlayer());
+			Object entityPlayer = cp.getEntityPlayer();
+			list.remove(entityPlayer);
 			customPlayers.remove(name);
+			try {
+				new PlayOutPlayerInfo(entityPlayer, playerInfoAction.REMOVE_PLAYER);
+			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
+					| InvocationTargetException e) {
+				e.printStackTrace();
+			}
 			Main.instance.fakePlayersCount = Main.instance.fakePlayersCount - 1;
+			
 		}
     }
  
