@@ -73,7 +73,7 @@ public class Main extends JavaPlugin {
 		    public void run() {
 			     Instant afterPlayerCreation = Instant.now();
 			     Duration timeElapsed = Duration.between(beforePlayerCreation, afterPlayerCreation);
-			     Bukkit.getConsoleSender().sendMessage(internalPrefix + "§4It took §6" + timeElapsed.toString().replace("PT", "").replace("S", "s") + "§4 to simulate §6" + Integer.toString(getConfig().getInt("FakePlayers.OnlinePlayers")) + "§4 players.");
+			     Bukkit.getConsoleSender().sendMessage(internalPrefix + "§4It took §6" + timeElapsed.toString().replace("PT", "").replace("S", "s") + "§4 to simulate §6" + fakePlayersCount + "§4 players.");
 			 }
 		}.runTaskLater(this, 0L);
 	}
