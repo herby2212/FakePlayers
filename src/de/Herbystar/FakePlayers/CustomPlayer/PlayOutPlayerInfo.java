@@ -3,7 +3,6 @@ package de.Herbystar.FakePlayers.CustomPlayer;
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -24,26 +23,25 @@ public class PlayOutPlayerInfo {
 	
 	private static Class<?> enumPlayerInfoActionClass;
 	
-	private static Class<?> playerInfoDataClass;
-	private static Constructor<?> playerInfoDataConstructor;
-
 	static {
 		try {			
 			if(TTA_BukkitVersion.getVersionAsInt(2) >= 117) {
-//				minecraftServerClass = Class.forName("net.minecraft.server.MinecraftServer");
-//				worldServerClass = Class.forName("net.minecraft.server.level.WorldServer");
-//				enumGamemodeClass = Class.forName("net.minecraft.world.level.EnumGamemode");
+				entityPlayerClass = Class.forName("net.minecraft.server.level.EntityPlayer");
+				entityPlayerArrayClass = Class.forName("[Lnet.minecraft.server.level.EntityPlayer;");
+				
+				playOutPlayerInfoClass = Class.forName("net.minecraft.network.protocol.game.PacketPlayOutPlayerInfo");
+				
+				enumPlayerInfoActionClass = playOutPlayerInfoClass.getClasses()[0];
 			} else {
-				
-				entityPlayerArrayClass = Class.forName("[Lnet.minecraft.server.v1_14_R1.EntityPlayer;");
-				
 				entityPlayerClass = Reflection.getNMSClass("EntityPlayer");
-				playOutPlayerInfoClass = Reflection.getNMSClass("PacketPlayOutPlayerInfo");
-
-				enumPlayerInfoActionClass = playOutPlayerInfoClass.getClasses()[1];
+				entityPlayerArrayClass = getArrayVersionOfNMSClass("EntityPlayer");
 				
-				playOutPlayerInfoConstructor = playOutPlayerInfoClass.getConstructor(enumPlayerInfoActionClass, entityPlayerArrayClass);
-			}
+				playOutPlayerInfoClass = Reflection.getNMSClass("PacketPlayOutPlayerInfo");
+				
+				enumPlayerInfoActionClass = playOutPlayerInfoClass.getClasses()[1];
+			}		
+			
+			playOutPlayerInfoConstructor = playOutPlayerInfoClass.getConstructor(enumPlayerInfoActionClass, entityPlayerArrayClass);
 		} catch (SecurityException | NoSuchMethodException | ClassNotFoundException ex) {
             ex.printStackTrace();
         }
@@ -53,10 +51,10 @@ public class PlayOutPlayerInfo {
 		List<Object> playerActionInfoEnums = Arrays.asList(enumPlayerInfoActionClass.getEnumConstants());
 		Object enumPlayerActionInfo = EnumHelper.getEnumByString(playerActionInfoEnums, playerInfoAction.name());
 		
-		Object r = Array.newInstance(entityPlayerClass, 1);
-		Array.set(r, 0, entityPlayer);
+		Object entityPlayerArray = Array.newInstance(entityPlayerClass, 1);
+		Array.set(entityPlayerArray, 0, entityPlayer);
 		
-		Object packetPlayOutPlayerInfo = playOutPlayerInfoConstructor.newInstance(enumPlayerActionInfo, r);
+		Object packetPlayOutPlayerInfo = playOutPlayerInfoConstructor.newInstance(enumPlayerActionInfo, entityPlayerArray);
 		
 		for(Player p : Bukkit.getOnlinePlayers()) {
 			Reflection.sendPacket(p, packetPlayOutPlayerInfo);
@@ -66,4 +64,18 @@ public class PlayOutPlayerInfo {
 	public static enum playerInfoAction {
 		ADD_PLAYER, REMOVE_PLAYER;
 	}
+	
+	private static Class<?> getArrayVersionOfNMSClass(String name) {
+        String version = Bukkit.getServer().getClass().getName().split("\\.")[3];
+        String className = "[Lnet.minecraft.server." + version + "." + name + ";";
+        Class<?> c = null;
+        
+        try {
+            c = Class.forName(className);
+        }
+        catch(Exception e) {
+            e.printStackTrace();
+        }
+        return c;
+    }
 }
