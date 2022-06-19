@@ -17,6 +17,7 @@ import com.mojang.authlib.GameProfile;
 
 import de.Herbystar.FakePlayers.Main;
 import de.Herbystar.FakePlayers.CustomPlayer.NMS_CustomPlayer;
+import de.Herbystar.FakePlayers.CustomPlayer.WrongWorldException;
 import de.Herbystar.FakePlayers.Utilities.RandomUUID;
 import de.Herbystar.TTA.Utils.Reflection;
 import de.Herbystar.TTA.Utils.TTA_BukkitVersion;
@@ -110,7 +111,12 @@ public class NMS_PlayerListHandler implements PlayerListHandler {
             
             list = (List<Object>) f.get(pList);
             for(int i = 0; i < amount; i++) {
-            	NMS_CustomPlayer cp = new NMS_CustomPlayer("", UUID.fromString("3e5cf803-1183-43f5-a53d-ea53c61b6274"));
+            	NMS_CustomPlayer cp;
+				try {
+					cp = new NMS_CustomPlayer("", UUID.fromString("3e5cf803-1183-43f5-a53d-ea53c61b6274"));
+				} catch (WrongWorldException e) {
+					break;
+				}
             	fakedPlayersStorage.add(cp);
             	list.add(cp.getEntityPlayer());
             }
@@ -132,7 +138,13 @@ public class NMS_PlayerListHandler implements PlayerListHandler {
     public void addCustomOnlinePlayer(String name) {
 //    	Method getDedicatedServer;
 		try {
-	    	NMS_CustomPlayer customPlayer = new NMS_CustomPlayer(name, RandomUUID.randomUUID());		
+	    	NMS_CustomPlayer customPlayer;
+			try {
+				customPlayer = new NMS_CustomPlayer(name, RandomUUID.randomUUID());
+			} catch (WrongWorldException e) {
+				return;
+			}
+		
 			list.add(customPlayer.getEntityPlayer());
 			customPlayers.put(name, customPlayer);
 

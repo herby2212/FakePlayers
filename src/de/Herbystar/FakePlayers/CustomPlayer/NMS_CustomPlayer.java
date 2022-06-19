@@ -40,7 +40,7 @@ public class NMS_CustomPlayer {
 	private static Method setGamemodeMethod;
 	
 	private Object entityPlayer;
-	
+		
 	static {
 		try {		
 			craftServerClass = Reflection.getCraftClass("CraftServer");
@@ -104,7 +104,7 @@ public class NMS_CustomPlayer {
         }
 	}
 	
-    public NMS_CustomPlayer(String name, UUID uuid) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, InstantiationException, NoSuchMethodException, SecurityException {
+    public NMS_CustomPlayer(String name, UUID uuid) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, InstantiationException, NoSuchMethodException, SecurityException, WrongWorldException {
     	Method getDedicatedServer = craftServerClass.getMethod("getServer");
     	Object dServer =  getDedicatedServer.invoke(craftServerClass.cast(Bukkit.getServer()));
     	
@@ -116,6 +116,7 @@ public class NMS_CustomPlayer {
     		wServer = getWorldServer.invoke(craftWorldClass.cast(Bukkit.getServer().getWorld(Main.instance.defaultWorldName)));
     	} catch(NullPointerException ex) {
     		Bukkit.getConsoleSender().sendMessage(Main.instance.internalPrefix + "§cError: Misconfigured default world in config!");
+    		throw new WrongWorldException();
     	}
     	
     	Object worldServer = worldServerClass.cast(wServer);
