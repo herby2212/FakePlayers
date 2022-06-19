@@ -111,7 +111,12 @@ public class NMS_CustomPlayer {
         Object mcServer = minecraftServerClass.cast(dServer);
         
     	Method getWorldServer = craftWorldClass.getMethod("getHandle");
-    	Object wServer =  getWorldServer.invoke(craftWorldClass.cast(Bukkit.getServer().getWorld(Main.instance.defaultWorldName)));
+    	Object wServer = null;
+    	try {
+    		wServer = getWorldServer.invoke(craftWorldClass.cast(Bukkit.getServer().getWorld(Main.instance.defaultWorldName)));
+    	} catch(NullPointerException ex) {
+    		Bukkit.getConsoleSender().sendMessage(Main.instance.internalPrefix + "§cError: Misconfigured default world in config!");
+    	}
     	
     	Object worldServer = worldServerClass.cast(wServer);
     	Object playerInteractManager = null;
