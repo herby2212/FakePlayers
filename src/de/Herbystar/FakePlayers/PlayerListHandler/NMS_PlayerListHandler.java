@@ -143,7 +143,7 @@ public class NMS_PlayerListHandler implements PlayerListHandler {
 		try {
 	    	NMS_CustomPlayer customPlayer;
 	    	UUID uuid = RandomUUID.randomUUID();
-	    	if(Main.instance.getConfig().getBoolean("FakePlayers.AdvancedFakedPlayers (Wiki Recommended).Skins") == true) {
+	    	if(Main.instance.skins == true) {
 	    		uuid = Bukkit.getServer().getOfflinePlayer(name).getUniqueId();
 	    	}
 			try {
@@ -172,15 +172,15 @@ public class NMS_PlayerListHandler implements PlayerListHandler {
     public void removeCustomOnlinePlayer(String name) {
 		if(customPlayers.containsKey(name)) {
 			NMS_CustomPlayer cp = customPlayers.get(name);
-			Object entityPlayer = cp.getEntityPlayer();
-			list.remove(entityPlayer);
-			customPlayers.remove(name);
+			Object entityPlayer = cp.getEntityPlayer();	
 			try {
 				new PlayOutPlayerInfo(entityPlayer, playerInfoAction.REMOVE_PLAYER);
 			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
 					| InvocationTargetException e) {
 				e.printStackTrace();
 			}
+			list.remove(entityPlayer);
+			customPlayers.remove(name);
 			Main.instance.fakePlayersCount = Main.instance.fakePlayersCount - 1;
 			
 		}

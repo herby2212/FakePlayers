@@ -11,7 +11,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import de.Herbystar.FakePlayers.Events.PlayerJoinEventHandler;
 import de.Herbystar.FakePlayers.Events.PlayerLoginEventHandler;
+import de.Herbystar.FakePlayers.Events.PlayerQuitEventHandler;
 import de.Herbystar.FakePlayers.PlayerListHandler.NMS_PlayerListHandler;
 import de.Herbystar.FakePlayers.PlayerListHandler.PlayerListHandler;
 
@@ -26,6 +28,9 @@ public class Main extends JavaPlugin {
 	public String defaultWorldName = "world";
 	public boolean protocolLib = false;
 	public String gamemode;
+	public boolean balancePlayerCount;
+	public boolean reUseUUIDs;
+	public boolean skins;
 	public boolean advancedFakedPlayersEnabled = false;
 	public List<String> advancedFakedPlayersNames;
 	
@@ -37,6 +42,9 @@ public class Main extends JavaPlugin {
 		this.defaultWorldName = this.getConfig().getString("FakePlayers.defaultWorld");
 		this.protocolLib = this.getConfig().getBoolean("FakePlayers.ProtocolLib");
 		this.gamemode = this.getConfig().getString("FakePlayers.Gamemode");
+		this.balancePlayerCount = this.getConfig().getBoolean("FakePlayers.BalancePlayerCount");
+		this.reUseUUIDs = this.getConfig().getBoolean("FakePlayers.AdvancedFakedPlayers (Wiki Recommended).ReUseUUIDs");
+		this.skins = this.getConfig().getBoolean("FakePlayers.AdvancedFakedPlayers (Wiki Recommended).Skins");
 		this.advancedFakedPlayersEnabled = this.getConfig().getBoolean("FakePlayers.AdvancedFakedPlayers (Wiki Recommended).Enabled");
 		this.advancedFakedPlayersNames = this.getConfig().getStringList("FakePlayers.AdvancedFakedPlayers (Wiki Recommended).Names");
 		
@@ -143,6 +151,8 @@ public class Main extends JavaPlugin {
 	
 	private void getEvents() {
 		Bukkit.getPluginManager().registerEvents(new PlayerLoginEventHandler(), this);
+		Bukkit.getPluginManager().registerEvents(new PlayerJoinEventHandler(), this);
+		Bukkit.getPluginManager().registerEvents(new PlayerQuitEventHandler(), this);
 	}
 	
 	private void getCommands() {

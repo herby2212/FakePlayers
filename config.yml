@@ -1,11 +1,13 @@
 #Config of the plugin use Oe,Ue,Ae for umlauts! Do not change the main Structure of the config or you get a error message on server start!#
 FakePlayers:
   OnlinePlayers: 10
+  BalancePlayerCount: false
   defaultWorld: world
   ProtocolLib: false
   Gamemode: CREATIVE
   AdvancedFakedPlayers (Wiki Recommended):
     Enabled: false
+    ReUseUUIDs: false
     Skins: true
     Names:
     - Notch
