@@ -1,6 +1,7 @@
 package de.Herbystar.FakePlayers.Utilities;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
@@ -21,6 +22,27 @@ public class UUIDRecycler {
 			UUID fakePlayerUUID = UUID.fromString(pair.split("-")[1]);
 			
 			fakePlayerUUIDStorage.put(fakePlayerName, fakePlayerUUID);
+		}
+	}
+	
+	public static void saveUUIDs() {
+		YamlConfiguration uuidStorage = YamlConfiguration.loadConfiguration(uuidStorageFile);
+		
+		List<String> nameUUIDPairs = uuidStorage.getStringList("FakePlayerUUIDs");
+		for(String key : fakePlayerUUIDStorage.keySet()) {
+			String entry = key + "-" + fakePlayerUUIDStorage.get(key);
+			if(!nameUUIDPairs.contains(entry)) {
+				nameUUIDPairs.add(entry);
+			}
+		}
+		saveConfig(uuidStorage, uuidStorageFile);
+	}
+	
+	private static void saveConfig(YamlConfiguration config, File file) {
+		try {
+			config.save(file);
+		} catch (IOException ex) {
+			ex.printStackTrace();
 		}
 	}
 	

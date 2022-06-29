@@ -16,6 +16,7 @@ import de.Herbystar.FakePlayers.Events.PlayerLoginEventHandler;
 import de.Herbystar.FakePlayers.Events.PlayerQuitEventHandler;
 import de.Herbystar.FakePlayers.PlayerListHandler.NMS_PlayerListHandler;
 import de.Herbystar.FakePlayers.PlayerListHandler.PlayerListHandler;
+import de.Herbystar.FakePlayers.Utilities.UUIDRecycler;
 
 public class Main extends JavaPlugin {
 	
@@ -38,6 +39,7 @@ public class Main extends JavaPlugin {
 		instance = this;
 		sendTerms();
 		loadConfig();
+		UUIDRecycler.loadUUIDs();
 		
 		this.defaultWorldName = this.getConfig().getString("FakePlayers.defaultWorld");
 		this.protocolLib = this.getConfig().getBoolean("FakePlayers.ProtocolLib");

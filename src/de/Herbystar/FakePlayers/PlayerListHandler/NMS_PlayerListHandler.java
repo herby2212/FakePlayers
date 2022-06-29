@@ -21,6 +21,7 @@ import de.Herbystar.FakePlayers.CustomPlayer.PlayOutPlayerInfo;
 import de.Herbystar.FakePlayers.CustomPlayer.WrongWorldException;
 import de.Herbystar.FakePlayers.CustomPlayer.PlayOutPlayerInfo.playerInfoAction;
 import de.Herbystar.FakePlayers.Utilities.RandomUUID;
+import de.Herbystar.FakePlayers.Utilities.UUIDRecycler;
 import de.Herbystar.TTA.Utils.Reflection;
 import de.Herbystar.TTA.Utils.TTA_BukkitVersion;
 
@@ -143,6 +144,11 @@ public class NMS_PlayerListHandler implements PlayerListHandler {
 		try {
 	    	NMS_CustomPlayer customPlayer;
 	    	UUID uuid = RandomUUID.randomUUID();
+	    	
+	    	if(Main.instance.reUseUUIDs == true && UUIDRecycler.fakePlayerUUIDStorage.containsKey(name)) {
+	    		uuid = UUIDRecycler.fakePlayerUUIDStorage.get(name);
+	    	}
+	    	
 	    	if(Main.instance.skins == true) {
 	    		uuid = Bukkit.getServer().getOfflinePlayer(name).getUniqueId();
 	    	}
@@ -154,7 +160,11 @@ public class NMS_PlayerListHandler implements PlayerListHandler {
 		
 			list.add(customPlayer.getEntityPlayer());
 			customPlayers.put(name, customPlayer);
-
+			if(Main.instance.reUseUUIDs == true) {
+				UUIDRecycler.fakePlayerUUIDStorage.put(name, uuid);
+				UUIDRecycler.saveUUIDs();
+			}
+			
 			Main.instance.fakePlayersCount = Main.instance.fakePlayersCount + 1;
 
 		} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | InstantiationException e) {
@@ -181,6 +191,12 @@ public class NMS_PlayerListHandler implements PlayerListHandler {
 			}
 			list.remove(entityPlayer);
 			customPlayers.remove(name);
+			
+			if(Main.instance.reUseUUIDs == true && UUIDRecycler.fakePlayerUUIDStorage.containsKey(name)) {
+				UUIDRecycler.fakePlayerUUIDStorage.remove(name);
+				UUIDRecycler.saveUUIDs();
+			}
+			
 			Main.instance.fakePlayersCount = Main.instance.fakePlayersCount - 1;
 			
 		}
