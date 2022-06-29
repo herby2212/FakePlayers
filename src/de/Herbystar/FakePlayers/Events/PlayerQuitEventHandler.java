@@ -6,6 +6,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 import de.Herbystar.FakePlayers.Main;
+import de.Herbystar.FakePlayers.PlayerListHandler.NMS_PlayerListHandler;
 
 public class PlayerQuitEventHandler implements Listener {
 	
@@ -19,7 +20,11 @@ public class PlayerQuitEventHandler implements Listener {
 		if(Main.instance.advancedFakedPlayersEnabled == false) {
 			Main.instance.playerListHandler.setOnlinePlayers(Main.instance.fakePlayersCount + 1);
 		} else {
-			Main.instance.playerListHandler.addCustomOnlinePlayer(player.getName());
+			for(String name : Main.instance.advancedFakedPlayersNames) {
+				if(!NMS_PlayerListHandler.customPlayers.keySet().contains(name)) {
+					Main.instance.playerListHandler.addCustomOnlinePlayer(name);
+				}
+			}
 		}
 	}
 

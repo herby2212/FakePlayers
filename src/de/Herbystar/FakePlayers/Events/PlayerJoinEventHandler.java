@@ -6,6 +6,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
 import de.Herbystar.FakePlayers.Main;
+import de.Herbystar.FakePlayers.PlayerListHandler.NMS_PlayerListHandler;
 
 public class PlayerJoinEventHandler implements Listener {
 	
@@ -19,7 +20,14 @@ public class PlayerJoinEventHandler implements Listener {
 		if(Main.instance.advancedFakedPlayersEnabled == false) {
 			Main.instance.playerListHandler.setOnlinePlayers(Main.instance.fakePlayersCount - 1);
 		} else {
-			Main.instance.playerListHandler.removeCustomOnlinePlayer(player.getName());
+			int i = 0;
+			for(String name : NMS_PlayerListHandler.customPlayers.keySet()) {
+				if(i == NMS_PlayerListHandler.customPlayers.size() - 1) {
+					Main.instance.playerListHandler.removeCustomOnlinePlayer(name);
+					break;
+				}
+				i++;
+			}
 		}
 	}
 

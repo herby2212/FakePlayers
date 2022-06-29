@@ -12,14 +12,15 @@ public class UUIDRecycler {
 	
 	public static HashMap<String, UUID> fakePlayerUUIDStorage = new HashMap<String, UUID>();
 	private static File uuidStorageFile = new File("plugins/FakePlayers", "UUIDStorage.yml");
+	private static String seperator = ":";
 
 	public static void loadUUIDs() {
 		YamlConfiguration uuidStorage = YamlConfiguration.loadConfiguration(uuidStorageFile);
 		
 		List<String> nameUUIDPairs = uuidStorage.getStringList("FakePlayerUUIDs");
 		for(String pair : nameUUIDPairs) {
-			String fakePlayerName = pair.split("-")[0];
-			UUID fakePlayerUUID = UUID.fromString(pair.split("-")[1]);
+			String fakePlayerName = pair.split(seperator)[0];
+			UUID fakePlayerUUID = UUID.fromString(pair.split(seperator)[1]);
 			
 			fakePlayerUUIDStorage.put(fakePlayerName, fakePlayerUUID);
 		}
@@ -30,11 +31,12 @@ public class UUIDRecycler {
 		
 		List<String> nameUUIDPairs = uuidStorage.getStringList("FakePlayerUUIDs");
 		for(String key : fakePlayerUUIDStorage.keySet()) {
-			String entry = key + "-" + fakePlayerUUIDStorage.get(key);
+			String entry = key + seperator + fakePlayerUUIDStorage.get(key);
 			if(!nameUUIDPairs.contains(entry)) {
 				nameUUIDPairs.add(entry);
 			}
 		}
+		uuidStorage.set("FakePlayerUUIDs", nameUUIDPairs);
 		saveConfig(uuidStorage, uuidStorageFile);
 	}
 	
