@@ -107,7 +107,11 @@ public class NMS_PlayerListHandler implements PlayerListHandler {
             Object pList = playerList.get(instance);
             Field f;
             if(TTA_BukkitVersion.getVersionAsInt(2) >= 117) {
-            	f = pList.getClass().getSuperclass().getDeclaredField("j");
+            	if(TTA_BukkitVersion.matchVersion(Arrays.asList("1.19.1", "1.19.2"))) {
+            		f = pList.getClass().getSuperclass().getDeclaredField("k");
+            	} else {
+            		f = pList.getClass().getSuperclass().getDeclaredField("j");
+            	}
             } else {
             	f = pList.getClass().getSuperclass().getDeclaredField("players");
             }
