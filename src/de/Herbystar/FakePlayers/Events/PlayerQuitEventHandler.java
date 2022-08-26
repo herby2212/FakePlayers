@@ -23,6 +23,7 @@ public class PlayerQuitEventHandler implements Listener {
 			for(String name : Main.instance.advancedFakedPlayersNames) {
 				if(!NMS_PlayerListHandler.customPlayers.keySet().contains(name)) {
 					Main.instance.playerListHandler.addCustomOnlinePlayer(name);
+					break;
 				}
 			}
 		}
