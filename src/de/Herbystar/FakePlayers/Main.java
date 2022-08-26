@@ -34,6 +34,7 @@ public class Main extends JavaPlugin {
 	public boolean reUseUUIDs;
 	public boolean skins;
 	public boolean advancedFakedPlayersEnabled = false;
+	public boolean blockCommandsToFakePlayer = true;
 	public List<String> advancedFakedPlayersNames;
 	
 	public void onEnable() {
@@ -50,6 +51,7 @@ public class Main extends JavaPlugin {
 		this.skins = this.getConfig().getBoolean("FakePlayers.AdvancedFakedPlayers (Wiki Recommended).Skins");
 		this.advancedFakedPlayersEnabled = this.getConfig().getBoolean("FakePlayers.AdvancedFakedPlayers (Wiki Recommended).Enabled");
 		this.advancedFakedPlayersNames = this.getConfig().getStringList("FakePlayers.AdvancedFakedPlayers (Wiki Recommended).Names");
+		this.blockCommandsToFakePlayer = this.getConfig().getBoolean("FakePlayers.AdvancedFakedPlayers (Wiki Recommended).BlockCommandsToFakePlayer");
 		
 		getCommands();
 		getEvents();

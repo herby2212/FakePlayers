@@ -9,6 +9,7 @@ FakePlayers:
     Enabled: false
     ReUseUUIDs: false
     Skins: true
+    BlockCommandsToFakePlayer: true
     Names:
     - Notch
     - Intel_7
