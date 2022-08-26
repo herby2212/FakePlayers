@@ -3,12 +3,17 @@ package de.Herbystar.FakePlayers.CustomClient;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.net.SocketAddress;
 import java.util.Arrays;
 import java.util.List;
 
-import de.Herbystar.FakePlayers.CustomPlayer.CustomChannel;
+import org.bukkit.Bukkit;
+
+import de.Herbystar.FakePlayers.CustomClient.cClasses.CustomChannel;
 import de.Herbystar.TTA.Utils.Reflection;
 import de.Herbystar.TTA.Utils.TTA_BukkitVersion;
+import io.netty.channel.Channel;
 
 public class NMS_CustomClient {
 	
@@ -77,11 +82,15 @@ public class NMS_CustomClient {
     	Object netManager = networkManagerConstructor.newInstance(getEnumByString(Arrays.asList(enumProtocolDirection.getEnumConstants()), connectionEnumName));
     	channel.setAccessible(true);
     	socketAddress.setAccessible(true);
-    	CustomChannel cc = new CustomChannel();
-    	channel.set(netManager, cc);
-    	socketAddress.set(netManager, cc.remoteAddress());
+    	
+    	channel.set(netManager, new CustomChannel());
+    	
+    	Method remoteAddress = Reflection.getMethod(CustomChannel.class, "remoteAddress");
+    	socketAddress.set(netManager, remoteAddress.invoke(channel.get(netManager), new Object[0]));
+    	
     	preparing.setAccessible(true);
-    	preparing.set(netManager, false);
+    	preparing.setBoolean(netManager, false);
+    	
     	playerCon = playerConnectionConstructor.newInstance(new Object[] { minecraftServer,
         		netManager,
         		entityPlayer });

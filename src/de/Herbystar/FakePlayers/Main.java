@@ -11,6 +11,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import de.Herbystar.FakePlayers.Events.PlayerCommandPreprocessHandler;
 import de.Herbystar.FakePlayers.Events.PlayerJoinEventHandler;
 import de.Herbystar.FakePlayers.Events.PlayerLoginEventHandler;
 import de.Herbystar.FakePlayers.Events.PlayerQuitEventHandler;
@@ -152,6 +153,7 @@ public class Main extends JavaPlugin {
 	}
 	
 	private void getEvents() {
+		Bukkit.getPluginManager().registerEvents(new PlayerCommandPreprocessHandler(), this);
 		Bukkit.getPluginManager().registerEvents(new PlayerLoginEventHandler(), this);
 		Bukkit.getPluginManager().registerEvents(new PlayerJoinEventHandler(), this);
 		Bukkit.getPluginManager().registerEvents(new PlayerQuitEventHandler(), this);
