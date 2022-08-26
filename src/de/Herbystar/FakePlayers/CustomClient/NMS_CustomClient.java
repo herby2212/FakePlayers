@@ -1,10 +1,12 @@
 package de.Herbystar.FakePlayers.CustomClient;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.List;
 
+import de.Herbystar.FakePlayers.CustomPlayer.CustomChannel;
 import de.Herbystar.TTA.Utils.Reflection;
 import de.Herbystar.TTA.Utils.TTA_BukkitVersion;
 
@@ -19,6 +21,10 @@ public class NMS_CustomClient {
 	private static Class<?> playerConnectionClass;
 	private static Constructor<?> playerConnectionConstructor;
 	
+	private static Field preparing;
+	private static Field channel;
+	private static Field socketAddress;
+	
 	private Object playerCon;
 	private static String connectionEnumName;
 	
@@ -32,6 +38,14 @@ public class NMS_CustomClient {
 				
 				playerConnectionClass = Reflection.getNMSClass("PlayerConnection");
 				
+				preparing = networkManagerClass.getField("preparing");
+				channel = networkManagerClass.getField("channel");
+				if(TTA_BukkitVersion.getVersionAsInt(2) < 113) {
+					socketAddress = networkManagerClass.getField("l");
+				} else {
+					socketAddress = networkManagerClass.getField("socketAddress");
+				}
+				
 				connectionEnumName = "CLIENTBOUND";
 			} else {
 				minecraftServerClass = Class.forName("net.minecraft.server.MinecraftServer");
@@ -41,20 +55,37 @@ public class NMS_CustomClient {
 				
 				playerConnectionClass = Class.forName("net.minecraft.server.network.PlayerConnection");
 				
+				preparing = networkManagerClass.getField("preparing");
+				if(TTA_BukkitVersion.getVersionAsInt(2) > 117) {
+					channel = networkManagerClass.getField("m");
+					socketAddress = networkManagerClass.getField("n");
+				} else {
+					channel = networkManagerClass.getField("k");
+					socketAddress = networkManagerClass.getField("l");
+				}
+				
 				connectionEnumName = "b";
 			}
 			networkManagerConstructor = networkManagerClass.getConstructor(enumProtocolDirection);
 			playerConnectionConstructor = playerConnectionClass.getConstructor(minecraftServerClass, networkManagerClass, entityPlayerClass);
-		} catch(ClassNotFoundException | NoSuchMethodException | SecurityException ex) {
+		} catch(ClassNotFoundException | NoSuchMethodException | SecurityException | NoSuchFieldException ex) {
 			ex.printStackTrace();
 		}
 	}
 	
     public NMS_CustomClient(Object minecraftServer, Object entityPlayer) throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
     	Object netManager = networkManagerConstructor.newInstance(getEnumByString(Arrays.asList(enumProtocolDirection.getEnumConstants()), connectionEnumName));
+    	channel.setAccessible(true);
+    	socketAddress.setAccessible(true);
+    	CustomChannel cc = new CustomChannel();
+    	channel.set(netManager, cc);
+    	socketAddress.set(netManager, cc.remoteAddress());
+    	preparing.setAccessible(true);
+    	preparing.set(netManager, false);
     	playerCon = playerConnectionConstructor.newInstance(new Object[] { minecraftServer,
         		netManager,
         		entityPlayer });
+    	setFieldsAccessible(Arrays.asList(channel, socketAddress, preparing), false);
     }
     
     private Object getEnumByString(List<Object> enumList, String target) {
@@ -69,6 +100,16 @@ public class NMS_CustomClient {
     
     public Object getPlayerConnection() {
     	return playerCon;
+    }
+    
+    /**
+     * Sets a list of Fields either accessible or inaccessible.
+     * @param accessible
+     */
+    private void setFieldsAccessible(List<Field> fieldList, boolean accessible) {
+    	for(Field field : fieldList) {
+    		field.setAccessible(accessible);
+    	}
     }
     
 }
