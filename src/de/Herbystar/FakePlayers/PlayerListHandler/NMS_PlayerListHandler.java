@@ -55,11 +55,7 @@ public class NMS_PlayerListHandler implements PlayerListHandler {
 	private static Field players;	
 	 
     static {    
-        try {
-        	craftPlayerClass = Reflection.getCraftClass("entity.CraftPlayer");
-        	
-        	craftServerClass = Reflection.getCraftClass("CraftServer");
-        	
+        try {        	
         	if(TTA_BukkitVersion.getVersionAsInt(2) >= 117) {
         		worldClass = Class.forName("net.minecraft.world.level.World");
             	worldServerClass = Class.forName("net.minecraft.server.level.WorldServer");
@@ -88,8 +84,13 @@ public class NMS_PlayerListHandler implements PlayerListHandler {
             	} else {
                 	playerList = minecraftServerClass.getDeclaredField("playerList");
             	}
-        	}      	
-        } catch (SecurityException | ClassNotFoundException | NoSuchFieldException ex) {
+        	}
+        	
+        	craftPlayerClass = Reflection.getCraftClass("entity.CraftPlayer");
+        	craftServerClass = Reflection.getCraftClass("CraftServer");
+        	
+        	craftPlayerConstructor = craftPlayerClass.getConstructor(craftServerClass, entityPlayerClass);        	
+        } catch (SecurityException | ClassNotFoundException | NoSuchFieldException | NoSuchMethodException ex) {
             System.err.println("Error - Classes not initialized!");
 			ex.printStackTrace();
         }
@@ -124,6 +125,7 @@ public class NMS_PlayerListHandler implements PlayerListHandler {
 				} catch (WrongWorldException e) {
 					break;
 				}
+				
             	fakedPlayersStorage.add(cp);
             	list.add(cp.getEntityPlayer());
             }
@@ -163,6 +165,11 @@ public class NMS_PlayerListHandler implements PlayerListHandler {
 			}
 		
 			list.add(customPlayer.getEntityPlayer());
+//			Method getHandle = craftPlayerClass.getMethod("getHandle", new Class[0]);
+//			Object craftPlayer = craftPlayerConstructor.newInstance(new Object[] { craftServerClass.cast(Bukkit.getServer()), customPlayer.getEntityPlayer() });
+//			Bukkit.getConsoleSender().sendMessage(entityPlayerClass.getDeclaredField("b").get(getHandle.invoke(craftPlayer, new Object[0])) + "");
+//			list.add(getHandle.invoke(craftPlayer, new Object[0]));
+			
 			customPlayers.put(name, customPlayer);
 			if(Main.instance.reUseUUIDs == true) {
 				UUIDRecycler.fakePlayerUUIDStorage.put(name, uuid);

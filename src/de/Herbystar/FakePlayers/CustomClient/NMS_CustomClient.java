@@ -4,7 +4,6 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.net.SocketAddress;
 import java.util.Arrays;
 import java.util.List;
 
@@ -13,7 +12,6 @@ import org.bukkit.Bukkit;
 import de.Herbystar.FakePlayers.CustomClient.cClasses.CustomChannel;
 import de.Herbystar.TTA.Utils.Reflection;
 import de.Herbystar.TTA.Utils.TTA_BukkitVersion;
-import io.netty.channel.Channel;
 
 public class NMS_CustomClient {
 	
@@ -43,12 +41,12 @@ public class NMS_CustomClient {
 				
 				playerConnectionClass = Reflection.getNMSClass("PlayerConnection");
 				
-				preparing = networkManagerClass.getField("preparing");
-				channel = networkManagerClass.getField("channel");
+				preparing = networkManagerClass.getDeclaredField("preparing");
+				channel = networkManagerClass.getDeclaredField("channel");
 				if(TTA_BukkitVersion.getVersionAsInt(2) < 113) {
-					socketAddress = networkManagerClass.getField("l");
+					socketAddress = networkManagerClass.getDeclaredField("l");
 				} else {
-					socketAddress = networkManagerClass.getField("socketAddress");
+					socketAddress = networkManagerClass.getDeclaredField("socketAddress");
 				}
 				
 				connectionEnumName = "CLIENTBOUND";
@@ -60,13 +58,13 @@ public class NMS_CustomClient {
 				
 				playerConnectionClass = Class.forName("net.minecraft.server.network.PlayerConnection");
 				
-				preparing = networkManagerClass.getField("preparing");
+				preparing = networkManagerClass.getDeclaredField("preparing");
 				if(TTA_BukkitVersion.getVersionAsInt(2) > 117) {
-					channel = networkManagerClass.getField("m");
-					socketAddress = networkManagerClass.getField("n");
+					channel = networkManagerClass.getDeclaredField("m");
+					socketAddress = networkManagerClass.getDeclaredField("n");
 				} else {
-					channel = networkManagerClass.getField("k");
-					socketAddress = networkManagerClass.getField("l");
+					channel = networkManagerClass.getDeclaredField("k");
+					socketAddress = networkManagerClass.getDeclaredField("l");
 				}
 				
 				connectionEnumName = "b";
@@ -90,10 +88,11 @@ public class NMS_CustomClient {
     	
     	preparing.setAccessible(true);
     	preparing.setBoolean(netManager, false);
-    	
+
     	playerCon = playerConnectionConstructor.newInstance(new Object[] { minecraftServer,
         		netManager,
         		entityPlayer });
+    	
     	setFieldsAccessible(Arrays.asList(channel, socketAddress, preparing), false);
     }
     

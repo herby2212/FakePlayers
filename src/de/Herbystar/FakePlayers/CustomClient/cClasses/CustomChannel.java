@@ -1,6 +1,9 @@
 package de.Herbystar.FakePlayers.CustomClient.cClasses;
 
+import java.net.InetSocketAddress;
 import java.net.SocketAddress;
+
+import org.bukkit.Bukkit;
 
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.channel.Channel;
@@ -178,9 +181,7 @@ public class CustomChannel implements Channel {
 
 	@Override
 	public SocketAddress remoteAddress() {
-		return new SocketAddress() {
-			private static final long serialVersionUID = 3582902678729526291L;
-		};
+		return new InetSocketAddress("localhost", Bukkit.getServer().getPort());
 	}
 
 	@Override
