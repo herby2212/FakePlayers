@@ -61,7 +61,7 @@ public class CustomChannel implements Channel {
 
 	@Override
 	public ChannelConfig config() {
-		return null;
+		return new CustomChannelConfig();
 	}
 
 	@Override
