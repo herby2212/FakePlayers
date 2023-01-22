@@ -60,7 +60,7 @@ public class NMS_CustomPlayer {
 								
 				entityPlayerClass = Class.forName("net.minecraft.server.level.EntityPlayer");
 				
-				if(TTA_BukkitVersion.isVersion("1.19", 2)) {
+				if(TTA_BukkitVersion.isVersion("1.19", 2) && !TTA_BukkitVersion.isVersion("1.19.3")) {
 					profilePublicKeyClass = Class.forName("net.minecraft.world.entity.player.ProfilePublicKey");
 					entityPlayerConstructor = entityPlayerClass.getConstructor(minecraftServerClass, worldServerClass, GameProfile.class, profilePublicKeyClass);
 				} else {
@@ -77,7 +77,7 @@ public class NMS_CustomPlayer {
 				worldServerClass = Reflection.getNMSClass("WorldServer");
 				
 				if(TTA_BukkitVersion.getVersionAsInt(2) <= 19) {
-					enumGamemodeClass = Reflection.getNMSClass("WorldSettings").getClasses()[0];					
+					enumGamemodeClass = Reflection.getNMSClass("WorldSettings").getClasses()[0];
 				} else {
 					enumGamemodeClass = Reflection.getNMSClass("EnumGamemode");
 				}
@@ -127,7 +127,7 @@ public class NMS_CustomPlayer {
     	Object playerInteractManager = null;
     	
     	if(TTA_BukkitVersion.getVersionAsInt(2) >= 117) {
-    		if(TTA_BukkitVersion.isVersion("1.19", 2)) {
+    		if(TTA_BukkitVersion.isVersion("1.19", 2) && !TTA_BukkitVersion.isVersion("1.19.3")) {
         		entityPlayer = entityPlayerConstructor.newInstance(mcServer, worldServer, new GameProfile(uuid, name), null);
     		} else {
         		entityPlayer = entityPlayerConstructor.newInstance(mcServer, worldServer, new GameProfile(uuid, name));

@@ -29,9 +29,15 @@ public class PlayOutPlayerInfo {
 				entityPlayerClass = Class.forName("net.minecraft.server.level.EntityPlayer");
 				entityPlayerArrayClass = Class.forName("[Lnet.minecraft.server.level.EntityPlayer;");
 				
-				playOutPlayerInfoClass = Class.forName("net.minecraft.network.protocol.game.PacketPlayOutPlayerInfo");
-				
-				enumPlayerInfoActionClass = playOutPlayerInfoClass.getClasses()[0];
+				if(TTA_BukkitVersion.isVersion("1.19.3")) {
+					playOutPlayerInfoClass = Class.forName("net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket");
+					enumPlayerInfoActionClass = playOutPlayerInfoClass.getClasses()[1];
+					playOutPlayerInfoConstructor = playOutPlayerInfoClass.getConstructor(enumPlayerInfoActionClass, entityPlayerClass);
+				} else {
+					playOutPlayerInfoClass = Class.forName("net.minecraft.network.protocol.game.PacketPlayOutPlayerInfo");
+					enumPlayerInfoActionClass = playOutPlayerInfoClass.getClasses()[0];
+					playOutPlayerInfoConstructor = playOutPlayerInfoClass.getConstructor(enumPlayerInfoActionClass, entityPlayerArrayClass);
+				}		
 			} else {
 				entityPlayerClass = Reflection.getNMSClass("EntityPlayer");
 				entityPlayerArrayClass = getArrayVersionOfNMSClass("EntityPlayer");
@@ -39,22 +45,29 @@ public class PlayOutPlayerInfo {
 				playOutPlayerInfoClass = Reflection.getNMSClass("PacketPlayOutPlayerInfo");
 				
 				enumPlayerInfoActionClass = playOutPlayerInfoClass.getClasses()[1];
+				playOutPlayerInfoConstructor = playOutPlayerInfoClass.getConstructor(enumPlayerInfoActionClass, entityPlayerArrayClass);
 			}		
 			
-			playOutPlayerInfoConstructor = playOutPlayerInfoClass.getConstructor(enumPlayerInfoActionClass, entityPlayerArrayClass);
 		} catch (SecurityException | NoSuchMethodException | ClassNotFoundException ex) {
             ex.printStackTrace();
         }
 	}
 	
 	public PlayOutPlayerInfo(Object entityPlayer, playerInfoAction playerInfoAction) throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		if(playerInfoAction == de.Herbystar.FakePlayers.CustomPlayer.PlayOutPlayerInfo.playerInfoAction.REMOVE_PLAYER && TTA_BukkitVersion.isVersion("1.19.3")) {
+			playerInfoAction = de.Herbystar.FakePlayers.CustomPlayer.PlayOutPlayerInfo.playerInfoAction.UPDATE_LISTED;
+		}
 		List<Object> playerActionInfoEnums = Arrays.asList(enumPlayerInfoActionClass.getEnumConstants());
 		Object enumPlayerActionInfo = EnumHelper.getEnumByString(playerActionInfoEnums, playerInfoAction.name());
 		
-		Object entityPlayerArray = Array.newInstance(entityPlayerClass, 1);
-		Array.set(entityPlayerArray, 0, entityPlayer);
-		
-		Object packetPlayOutPlayerInfo = playOutPlayerInfoConstructor.newInstance(enumPlayerActionInfo, entityPlayerArray);
+		Object entityPlayers;
+		if(TTA_BukkitVersion.isVersion("1.19.3")) {
+			entityPlayers = entityPlayer;
+		} else {
+			entityPlayers = Array.newInstance(entityPlayerClass, 1);
+			Array.set(entityPlayers, 0, entityPlayer);
+		}		
+		Object packetPlayOutPlayerInfo = playOutPlayerInfoConstructor.newInstance(enumPlayerActionInfo, entityPlayers);
 		
 		for(Player p : Bukkit.getOnlinePlayers()) {
 			Reflection.sendPacket(p, packetPlayOutPlayerInfo);
@@ -62,7 +75,7 @@ public class PlayOutPlayerInfo {
 	}
 	
 	public static enum playerInfoAction {
-		ADD_PLAYER, REMOVE_PLAYER;
+		ADD_PLAYER, REMOVE_PLAYER, UPDATE_LISTED;
 	}
 	
 	private static Class<?> getArrayVersionOfNMSClass(String name) {
