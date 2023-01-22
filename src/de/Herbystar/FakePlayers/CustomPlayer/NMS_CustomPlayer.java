@@ -6,6 +6,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -38,6 +39,7 @@ public class NMS_CustomPlayer {
 	private static Field playerCon;
 	private static Field playerIntactmanager;
 	private static Field minServer;
+	private static Field ping;
 	
 	private static Method setGamemodeMethod;
 	
@@ -70,6 +72,7 @@ public class NMS_CustomPlayer {
 				playerIntactmanager = entityPlayerClass.getField("d");
 				minServer = entityPlayerClass.getField("c");
 				playerCon = entityPlayerClass.getField("b");
+				ping = entityPlayerClass.getField("e");
 			} else {
 				minecraftServerClass = Reflection.getNMSClass("MinecraftServer");
 				
@@ -94,6 +97,7 @@ public class NMS_CustomPlayer {
 				
 				minServer = entityPlayerClass.getField("server");
 				playerCon = entityPlayerClass.getField("playerConnection");
+				ping = entityPlayerClass.getField("ping");
 			}
 						
 			if(TTA_BukkitVersion.isVersion("1.17", 2)) {
@@ -141,6 +145,9 @@ public class NMS_CustomPlayer {
     		entityPlayer = entityPlayerConstructor.newInstance(mcServer, worldServer, new GameProfile(uuid, name), playerInteractManager);
     	}
     	
+    	ping.setAccessible(true);
+    	ping.setInt(entityPlayer, new Random().nextInt(100));
+    	
     	List<Object> gamemodes = Arrays.asList(enumGamemodeClass.getEnumConstants());
     	Object gamemode = EnumHelper.getEnumByString(gamemodes, Main.instance.gamemode);
     	
@@ -149,7 +156,7 @@ public class NMS_CustomPlayer {
     	} else {
         	setGamemodeMethod.invoke(playerInteractManager, gamemode);
     	}  	
-        		
+        
         playerCon.setAccessible(true);
         
         Object connection = new NMS_CustomClient(minServer.get(entityPlayer), entityPlayer).getPlayerConnection();
