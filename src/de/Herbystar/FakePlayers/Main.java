@@ -8,6 +8,7 @@ import java.util.Random;
 import java.util.regex.Pattern;
 
 import org.bukkit.Bukkit;
+import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -162,7 +163,9 @@ public class Main extends JavaPlugin {
 	}
 	
 	private void getCommands() {
-		getCommand("fakePlayers").setExecutor(new Commands());
+		PluginCommand fakePlayersCommand = getCommand("fakePlayers");
+		fakePlayersCommand.setExecutor(new Commands());
+		fakePlayersCommand.setTabCompleter(new CommandCompleter());
 	}
 		
 	@SuppressWarnings("unused")
