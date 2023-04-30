@@ -29,7 +29,7 @@ public class PlayOutPlayerInfo {
 				entityPlayerClass = Class.forName("net.minecraft.server.level.EntityPlayer");
 				entityPlayerArrayClass = Class.forName("[Lnet.minecraft.server.level.EntityPlayer;");
 				
-				if(TTA_BukkitVersion.isVersion("1.19.3")) {
+				if(TTA_BukkitVersion.matchVersion(Arrays.asList("1.19.3", "1.19.4"))) {
 					playOutPlayerInfoClass = Class.forName("net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket");
 					enumPlayerInfoActionClass = playOutPlayerInfoClass.getClasses()[1];
 					playOutPlayerInfoConstructor = playOutPlayerInfoClass.getConstructor(enumPlayerInfoActionClass, entityPlayerClass);
@@ -54,14 +54,14 @@ public class PlayOutPlayerInfo {
 	}
 	
 	public PlayOutPlayerInfo(Object entityPlayer, playerInfoAction playerInfoAction) throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		if(playerInfoAction == de.Herbystar.FakePlayers.CustomPlayer.PlayOutPlayerInfo.playerInfoAction.REMOVE_PLAYER && TTA_BukkitVersion.isVersion("1.19.3")) {
+		if(playerInfoAction == de.Herbystar.FakePlayers.CustomPlayer.PlayOutPlayerInfo.playerInfoAction.REMOVE_PLAYER && TTA_BukkitVersion.matchVersion(Arrays.asList("1.19.3", "1.19.4"))) {
 			playerInfoAction = de.Herbystar.FakePlayers.CustomPlayer.PlayOutPlayerInfo.playerInfoAction.UPDATE_LISTED;
 		}
 		List<Object> playerActionInfoEnums = Arrays.asList(enumPlayerInfoActionClass.getEnumConstants());
 		Object enumPlayerActionInfo = EnumHelper.getEnumByString(playerActionInfoEnums, playerInfoAction.name());
 		
 		Object entityPlayers;
-		if(TTA_BukkitVersion.isVersion("1.19.3")) {
+		if(TTA_BukkitVersion.matchVersion(Arrays.asList("1.19.3", "1.19.4"))) {
 			entityPlayers = entityPlayer;
 		} else {
 			entityPlayers = Array.newInstance(entityPlayerClass, 1);

@@ -10,6 +10,7 @@ import java.util.Random;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
+
 import com.mojang.authlib.GameProfile;
 
 import de.Herbystar.FakePlayers.Main;
@@ -62,7 +63,7 @@ public class NMS_CustomPlayer {
 								
 				entityPlayerClass = Class.forName("net.minecraft.server.level.EntityPlayer");
 				
-				if(TTA_BukkitVersion.isVersion("1.19", 2) && !TTA_BukkitVersion.isVersion("1.19.3")) {
+				if(TTA_BukkitVersion.isVersion("1.19", 2) && !TTA_BukkitVersion.matchVersion(Arrays.asList("1.19.3", "1.19.4"))) {
 					profilePublicKeyClass = Class.forName("net.minecraft.world.entity.player.ProfilePublicKey");
 					entityPlayerConstructor = entityPlayerClass.getConstructor(minecraftServerClass, worldServerClass, GameProfile.class, profilePublicKeyClass);
 				} else {
@@ -131,7 +132,7 @@ public class NMS_CustomPlayer {
     	Object playerInteractManager = null;
     	
     	if(TTA_BukkitVersion.getVersionAsInt(2) >= 117) {
-    		if(TTA_BukkitVersion.isVersion("1.19", 2) && !TTA_BukkitVersion.isVersion("1.19.3")) {
+    		if(TTA_BukkitVersion.isVersion("1.19", 2) && !TTA_BukkitVersion.matchVersion(Arrays.asList("1.19.3", "1.19.4"))) {
         		entityPlayer = entityPlayerConstructor.newInstance(mcServer, worldServer, new GameProfile(uuid, name), null);
     		} else {
         		entityPlayer = entityPlayerConstructor.newInstance(mcServer, worldServer, new GameProfile(uuid, name));

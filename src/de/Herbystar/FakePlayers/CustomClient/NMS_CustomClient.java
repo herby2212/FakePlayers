@@ -7,8 +7,6 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
 
-import org.bukkit.Bukkit;
-
 import de.Herbystar.FakePlayers.CustomClient.cClasses.CustomChannel;
 import de.Herbystar.TTA.Utils.Reflection;
 import de.Herbystar.TTA.Utils.TTA_BukkitVersion;

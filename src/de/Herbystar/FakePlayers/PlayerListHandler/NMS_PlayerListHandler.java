@@ -64,8 +64,10 @@ public class NMS_PlayerListHandler implements PlayerListHandler {
                         	
             	entityPlayerClass = Class.forName("net.minecraft.server.level.EntityPlayer");
             	
-            	if(TTA_BukkitVersion.isVersion("1.19", 2)) {
+            	if(TTA_BukkitVersion.isVersion("1.19", 2) && !TTA_BukkitVersion.isVersion("1.19.4")) {
             		playerList = minecraftServerClass.getDeclaredField("P");
+            	} else if(TTA_BukkitVersion.isVersion("1.19.4")) {
+            		playerList = minecraftServerClass.getDeclaredField("Q");
             	} else {
                 	playerList = minecraftServerClass.getDeclaredField("S");
             	}
@@ -108,7 +110,7 @@ public class NMS_PlayerListHandler implements PlayerListHandler {
             Object pList = playerList.get(instance);
             Field f;
             if(TTA_BukkitVersion.getVersionAsInt(2) >= 117) {
-            	if(TTA_BukkitVersion.matchVersion(Arrays.asList("1.19.1", "1.19.2", "1.19.3"))) {
+            	if(TTA_BukkitVersion.matchVersion(Arrays.asList("1.19.1", "1.19.2", "1.19.3", "1.19.4"))) {
             		f = pList.getClass().getSuperclass().getDeclaredField("k");
             	} else {
             		f = pList.getClass().getSuperclass().getDeclaredField("j");
